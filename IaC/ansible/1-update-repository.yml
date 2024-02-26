@@ -1,0 +1,10 @@
+---
+- name: Actualizacion de repositorios del sistema
+  hosts: SUMA-servers
+  become: yes
+
+  tasks:
+    
+    - name: Actualizar repositorios
+      apt:
+        update_cache: yes

@@ -1,0 +1,34 @@
+---
+- name: Instalacion de composer
+  hosts: SUMA-servers
+  become: yes
+
+  tasks:
+    - name: Instalar paquetes necesarios
+      apt:
+        name:
+          - php-cli
+          - unzip
+        state: present
+
+    - name: Descargar el instalador de Composer
+      command: "curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php"
+
+    - name: Verificar el hash SHA-384 del instalador
+      set_fact:
+        expected_hash: "{{ lookup('url', 'https://composer.github.io/installer.sig') }}"
+
+    - name: Verificar el instalador
+      command: "php -r \"if (hash_file('SHA384', '/tmp/composer-setup.php') === '{{ expected_hash }}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('/tmp/composer-setup.php'); } echo PHP_EOL;\""
+      register: verification_result
+
+    - name: Instalar Composer
+      command: "sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer"
+      when: "'Installer verified' in verification_result.stdout"
+
+    - name: Verificar instalacion de composer
+      command: composer --version
+      register: composer_version
+
+    - debug: 
+        var: composer_version

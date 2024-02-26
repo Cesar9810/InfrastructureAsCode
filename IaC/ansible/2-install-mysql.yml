@@ -1,0 +1,42 @@
+---
+- name: Instalacion de MySQL
+  hosts: SUMA-servers
+  become: yes
+
+  tasks:
+    - name: Instalar MySQL
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Verificar estado de MySQL
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+    
+    - name: Habilitar servicio MySQL en el arranque
+      systemd:
+        name: mysql
+        enabled: yes
+
+    - name: Modificar bind-address en mysqld.cnf
+      lineinfile:
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+        line: 'bind-address = 0.0.0.0'
+        state: present
+
+    - name: Reiniciar servicio MySQL
+      systemd:
+        name: mysql
+        state: restarted
+
+    - name: Verificar estado de MySQL
+      command: systemctl status mysql.service
+
+    - name: Verificar version de MySQL
+      command: mysql --version
+      register: mysql_version
+    
+    - debug: 
+        var: mysql_version

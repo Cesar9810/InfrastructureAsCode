@@ -1,0 +1,42 @@
+---
+- name: Instalacion de PHP y sus modulos
+  hosts: SUMA-servers
+  become: yes
+
+  tasks:
+    - name: Actualizar repositorios de Ubuntu
+      apt:
+        update_cache: yes
+
+    - name: Instalar PHP
+      apt:
+        name: php8.1
+        state: present
+        install_recommends: no
+
+    - name: Instalar módulo mbstring
+      apt:
+        name: php8.1-mbstring
+        state: present
+
+    - name: Instalar módulo xml
+      apt:
+        name: php8.1-xml
+        state: present
+
+    # - name: Instalar módulo mysql
+    #   apt:
+    #     name: php8.1-mysql
+    #     state: present
+
+    - name: Instalar módulo curl
+      apt:
+        name: php8.1-curl
+        state: present
+
+    - name: Verificar versión de PHP
+      command: php -v
+      register: php_version
+
+    - debug:
+        var: php_version.stdout_lines

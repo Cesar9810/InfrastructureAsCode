@@ -1,0 +1,20 @@
+# ---
+# - name: Instalacion de PHP y sus modulos
+#   hosts: SUMA-servers
+#   become: yes
+
+#   tasks:
+#     - name: Agregar repositorio PHP
+#       apt_repository:
+#         repo: "ppa:ondrej/php"
+#         state: present
+
+#     - name: Instalar PHP y módulos
+#       apt:
+#         name:
+#           - php8.2
+#           - php-mysql
+#           - php-curl
+#           - php-mbstring
+#           - php-xml
+#         state: present

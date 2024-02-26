@@ -1,0 +1,48 @@
+---
+- name: Instalación y configuración de Nginx
+  hosts: SUMA-servers
+  become: yes
+
+  tasks:
+    - name: Instalar Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Crear directorios para el dominio
+      file:
+        path: "/var/www/{{ domain_name }}/html"
+        state: directory
+        mode: '0755'
+      vars:
+        domain_name: "44.231.121.26"
+
+    - name: Crear archivo de configuración de Nginx
+      template:
+        src: nginx_site.j2
+        dest: "/etc/nginx/sites-available/{{ domain_name }}"
+      vars:
+        domain_name: "44.231.121.26"
+
+    - name: Crear enlace simbólico a sites-enabled
+      file:
+        src: "/etc/nginx/sites-available/44.231.121.26"
+        dest: "/etc/nginx/sites-enabled/44.231.121.26"
+        state: link
+    
+    - name: Ajustar valor en nginx.conf
+      lineinfile:
+        path: "/etc/nginx/nginx.conf"
+        line: "server_names_hash_bucket_size 128;"
+      when: ansible_distribution_major_version|int >= 20
+
+    # - name: Probar configuración de Nginx
+    #   command: "nginx -t"
+    #   register: nginx_test
+    #   ignore_errors: yes
+
+    - name: verificar instalacion de nginx
+      command: nginx -v
+      register: nginix_version
+
+    
