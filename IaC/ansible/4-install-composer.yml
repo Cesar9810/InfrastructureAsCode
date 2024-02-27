@@ -26,9 +26,9 @@
       command: "sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer"
       when: "'Installer verified' in verification_result.stdout"
 
-    - name: Verificar instalacion de composer
-      command: composer --version
-      register: composer_version
+    # - name: Verificar instalacion de composer
+    #   command: composer --version
+    #   register: composer_version
 
-    - debug: 
-        var: composer_version
+    # - debug: 
+    #     var: composer_version

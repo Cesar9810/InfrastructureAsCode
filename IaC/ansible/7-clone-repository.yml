@@ -17,9 +17,14 @@
     #     create: yes
     #   become_user: ubuntu
 
-    - name: Clonar repositorio Git
-      git:
-        repo: "git@bitbucket.org:so4reeel/suma-api"
-        dest: "~/projects/suma-api"
-        version: develop
-      become_user: ubuntu
+    # - name: Clonar repositorio Git
+    #   git:
+    #     repo: "git@bitbucket.org:so4reeel/suma-api"
+    #     dest: "~/projects/suma-api"
+    #     version: develop
+    #   become_user: ubuntu
+
+    - name: Clonar repositorio de Bitbucket
+      shell: |
+        cd /home/ubuntu/projects
+        git clone --branch develop git@bitbucket.org:so4reeel/suma-api

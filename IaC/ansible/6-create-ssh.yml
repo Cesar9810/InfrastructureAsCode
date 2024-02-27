@@ -1,20 +1,25 @@
 ---
-# - name: Creacion de clave ssh
-#   hosts: SUMA-servers
-#   become: yes
+- name: Creacion de clave ssh
+  hosts: SUMA-servers
+  become: yes
 
-#   tasks:
-#     - name: Generar clave SSH
-#       command: ssh-keygen -t rsa -b 4096 -f /home/ubuntu/.ssh/id_rsa -C "cesarcalderon@sumawealth.com" -N "" 
-#       args:
-#         creates: /home/ubuntu/.ssh/id_rsa
+  tasks:
+    # - name: Generar clave SSH
+    #   command: ssh-keygen -t rsa -b 4096 -f /home/ubuntu/.ssh/id_rsa -C "cesarcalderon@sumawealth.com" -N "" 
+    #   args:
+    #     creates: /home/ubuntu/.ssh/id_rsa
 
-#     - name: Mostrar clave SSH pública
-#       shell: cat /home/ubuntu/.ssh/id_rsa.pub
-#       args:
-#         executable: /bin/bash
-#       register: clave_ssh_publica
+    - name: Ejecutar ssh-keygen
+      become: yes
+      become_user: ubuntu
+      command: ssh-keygen -t rsa -b 4096 -C "cesarcalderonorozco@sumawealth.com"
 
-#     - name: Imprimir clave SSH pública en consola
-#       debug:
-#         var: clave_ssh_publica.stdout_lines
+    - name: Mostrar clave SSH pública
+      shell: cat /home/ubuntu/.ssh/id_rsa.pub
+      args:
+        executable: /bin/bash
+      register: clave_ssh_publica
+
+    - name: Imprimir clave SSH pública en consola
+      debug:
+        var: clave_ssh_publica.stdout_lines

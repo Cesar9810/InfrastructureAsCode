@@ -1,0 +1,22 @@
+---
+- name: Generar clave SSH y clonar repositorio en servidor remoto
+  hosts: SUMA-servers
+  become: yes
+  become_user: ubuntu
+
+  tasks:
+    - name: Generar clave SSH
+      command: ssh-keygen -t rsa -b 4096 -C "cesarcalderon@sumawealth.com"
+      args:
+        chdir: "/home/ubuntu"
+      ignore_errors: yes
+      register: ssh_keygen_output
+
+    - name: Mostrar la clave SSH generada
+      debug:
+        msg: "{{ ssh_keygen_output.stdout }}"
+
+    # - name: Clonar repositorio de Bitbucket
+    #   shell: |
+    #     cd /home/ubuntu
+    #     git clone --branch develop git@bitbucket.org:so4reeel/suma-api

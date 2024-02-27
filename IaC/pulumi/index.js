@@ -8,6 +8,7 @@ const ec2InstanceType = "t2.micro";
 const ec2InstanceName = "SUMA Dashboard";
 const keyPairName = "myKeyPair";
 const securityGroupName = "SecurityGroupSSH";
+const defaultSecurityGroupId = "sg-04012560748896c5c";
 
 // Función para crear un grupo de seguridad
 function createSecurityGroup(name, ingressRules) {
@@ -23,7 +24,7 @@ function createEC2Instance(name, config) {
 
 // Crear clave SSH
  const ec2KeyPair = new aws.ec2.KeyPair(keyPairName, {
-     publicKey: pulumi.secret("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCZUGrum0B7Ucg0iITn2B1hW3Q9qiOJIyYU/g4QNAtzXQHYS2fOZWYpOSkR7x8FrACPzuOTpOFQEf97aPzFkqoRSucZzQVSB1FGshrVwb/bZHfwJjdVc44toIf8XeWc5W83fFxzg1i694D63Y9tzti4kJPOpmbpiPGDaxPnmKJyR9R0Fn010VkFHpRkcrVlNH/f0lZ30x5N02O/c/Ol6SbqKF8t50cFA/4smHZxIsqquWfLe3Xw/UeIkKENtV0uVAJwlb3QNRfzEHsAm/6XaB8CmOpwLPBhsPBJg3w7S5LKrhV6EzeBLZUthR+9ZlprEGqDiiutjWQf7NiBbJBQ7sp7"),
+     publicKey: pulumi.secret("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCQJmU/QUsJ4oq0bisUeFk4Z+uaEINB0aIBIeXQ7D2a73PoX5a69sGy0tyKnmRqfRXiXmMaGH73Sq3rghocfhooTdD4PG484+n+ClUihVGIufow+eaAZIWrsH3YAi/3TiPa7FMVQRnHU+5tl7GbEasoAerntuNpzHqXx0hDUj/oP2LFf1a1nFUCOMswUaa1BtugqOv9BLJYdri25f+VGDEXIgIh/mz+VuolPB4ZdygaBhPpQ8aqkE3JRc8y8Qg3Xo6qK2LB9xBtmAaNlH/qcnmJNt06ZSvfeQKdZWAXseBebH+PQaqjZV0KUAdUepF1Gn/iHXnaO5Kx8jZUZ+uge5EVfghnMFWxjoiV+vdDq1PlWEEf7SYeFFWodl0AJ5BgEQVW5Kr6ha9Oy7egM9oqdW30zW1Gl6Xfr088VubG/5dnccHR53mmT7J3nFLScwysr5c69mbxtssAt1Sa5/95u7FynLEq5Gdo2+6klB5v4TjJJ7yctGCWyVrnEVCoH16ApF8/6lMECuZGpg0duer5vkwc7FkKWMLsHQynJQ9yg4XoTA8PqsegX6W2VXfaZVXz095L/W2SatIHNB7h1v+Rj7F/KHlPeSqlX+Ce7hzO1puZiAp1IOtetv1T1P8u6bltC9UmKD5v+svIy71L7/KEAPZt1w2Svey/9nXx2vP42ggbWw=="),
 });
 
 // Obtener la última AMI de Ubuntu
@@ -52,7 +53,18 @@ const secGroup = createSecurityGroup(securityGroupName, [
         toPort: 80,
         cidrBlocks: ["0.0.0.0/0"],
     },
-   
+    {
+        protocol: "tcp",
+        fromPort: 443,
+        toPort: 443,
+        cidrBlocks: ["0.0.0.0/0"],
+    },
+    {
+        protocol: "tcp",
+        fromPort: 3306,
+        toPort: 3306,
+        cidrBlocks: ["0.0.0.0/0"],
+    },
 ]);
 
 // Configurar instancia EC2
@@ -60,7 +72,7 @@ const instanceConfig = {
     ami: ami.then(ami => ami.id),
     instanceType: ec2InstanceType,
     keyName: ec2KeyPair.keyName,
-    vpcSecurityGroupIds: [secGroup.id,],
+    vpcSecurityGroupIds: [secGroup.id, defaultSecurityGroupId],
     rootBlockDevice: {
         volumeType: "gp2",
         volumeSize: 20,
