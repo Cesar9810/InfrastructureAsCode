@@ -1,25 +1,19 @@
 ---
-- name: Creacion de clave ssh
+- name: Crear clave SSH y copiarla a Bitbucket
   hosts: SUMA-servers
-  become: yes
-
   tasks:
-    # - name: Generar clave SSH
-    #   command: ssh-keygen -t rsa -b 4096 -f /home/ubuntu/.ssh/id_rsa -C "cesarcalderon@sumawealth.com" -N "" 
-    #   args:
-    #     creates: /home/ubuntu/.ssh/id_rsa
+    - name: Generar clave SSH
+      command: ssh-keygen -t rsa -b 4096 -C "cesarcalderon@sumawealth" -f /home/ubuntu/.ssh/id_rsa -q -N ""
 
-    - name: Ejecutar ssh-keygen
-      become: yes
-      become_user: ubuntu
-      command: ssh-keygen -t rsa -b 4096 -C "cesarcalderonorozco@sumawealth.com"
+    - name: Obtener clave pública
+      command: cat /home/ubuntu/.ssh/id_rsa.pub
+      register: public_key
 
-    - name: Mostrar clave SSH pública
-      shell: cat /home/ubuntu/.ssh/id_rsa.pub
-      args:
-        executable: /bin/bash
-      register: clave_ssh_publica
-
-    - name: Imprimir clave SSH pública en consola
+    - name: Mostrar clave pública (solo para verificar)
       debug:
-        var: clave_ssh_publica.stdout_lines
+        var: public_key.stdout
+
+    # En esta parte deberías implementar la lógica para copiar la clave pública a Bitbucket.
+    # Esto puede variar dependiendo de cómo Bitbucket maneje el manejo de claves SSH.
+
+    # Después de este playbook, deberías haber copiado la clave pública generada a tu cuenta de Bitbucket.

@@ -5,16 +5,24 @@
   become_user: ubuntu
 
   tasks:
-    - name: Generar clave SSH
-      command: ssh-keygen -t rsa -b 4096 -C "cesarcalderon@sumawealth.com"
-      args:
-        chdir: "/home/ubuntu"
-      ignore_errors: yes
+    - name: Run ssh-keygen command
+      shell: ssh-keygen -t rsa -b 4096 -C "cesarcalderon@sumawealth.com"
       register: ssh_keygen_output
 
-    - name: Mostrar la clave SSH generada
+    - name: Print SSH keygen output
       debug:
-        msg: "{{ ssh_keygen_output.stdout }}"
+        msg: "{{ ssh_keygen_output.stdout }}" 
+   
+    # - name: Generar clave SSH
+    #   command: ssh-keygen -t rsa -b 4096 -C "cesarcalderon@sumawealth.com"
+    #   args:
+    #     chdir: "/home/ubuntu"
+    #   ignore_errors: yes
+    #   register: ssh_keygen_output
+
+    # - name: Mostrar la clave SSH generada
+    #   debug:
+    #     msg: "{{ ssh_keygen_output.stdout }}"
 
     # - name: Clonar repositorio de Bitbucket
     #   shell: |

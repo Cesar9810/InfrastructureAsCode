@@ -1,30 +1,18 @@
 ---
-- name: Clonar repositorio
+- name: Clonar repositorio desde Bitbucket
   hosts: SUMA-servers
-  become: yes
-
   tasks:
-    - name: Crear directorio projects
+    - name: Crear directorio para el proyecto
       file:
-        path: "~/projects"
+        path: /home/ubuntu/projects
         state: directory
-      become_user: ubuntu
+        mode: '0755'
 
-    # - name: Agregar clave del host de Bitbucket al known_hosts
-    #   lineinfile:
-    #     dest: "/home/ubuntu/.ssh/known_hosts"
-    #     line: "{{ lookup('pipe', 'ssh-keyscan bitbucket.org') }}"
-    #     create: yes
-    #   become_user: ubuntu
-
-    # - name: Clonar repositorio Git
-    #   git:
-    #     repo: "git@bitbucket.org:so4reeel/suma-api"
-    #     dest: "~/projects/suma-api"
-    #     version: develop
-    #   become_user: ubuntu
-
-    - name: Clonar repositorio de Bitbucket
-      shell: |
-        cd /home/ubuntu/projects
-        git clone --branch develop git@bitbucket.org:so4reeel/suma-api
+    - name: Clonar repositorio
+      git:
+        repo: git@bitbucket.org:so4reeel/suma-api
+        dest: /home/ubuntu/projects/suma-api
+        accept_hostkey: yes
+        key_file: /home/ubuntu/.ssh/id_rsa
+        force: yes
+        version: develop
